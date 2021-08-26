@@ -11,13 +11,11 @@
 ******************************************************************************/
 const got = require('got')
 const terminalImage = require('terminal-image');
-const Rarepress = require('../index');
-const run = async () => {
+const Rareterm = require('../index');
+(async () => {
   // 1.  Initialize rarepress (Use the default ETH path by not specifying 'key'
-  const rarepress = new Rarepress()
-  await rarepress.init({
-    host: "https://ropsten.rarepress.org/v0"
-  })
+  const rarepress = new Rareterm()
+  await rarepress.init({ host: "https://ropsten.rarenet.app/v1" })
 
   // 2. Download image as buffer
   const buf =  await got("https://thisartworkdoesnotexist.com").buffer()
@@ -26,13 +24,12 @@ const run = async () => {
   console.log(await terminalImage.buffer(buf));
 
   // 4. Add Buffer to IPFS
-  let cid = await rarepress.add(buf).catch((e) => {
-    console.log("ERROR", e)
-  })
+  let cid = await rarepress.fs.add(buf)
   console.log("cid = ", cid)
 
   // 5. Create Token
-  let token = await rarepress.create({
+  let token = await rarepress.token.create({
+    type: "ERC721",
     metadata: {
       name: "Rare",
       description: "Press",
@@ -41,5 +38,10 @@ const run = async () => {
   })
   console.log("token = ", token)
 
-}
-run()
+  // 6. publish files to IPFS
+  await rarepress.fs.push(cid)
+  await rarepress.fs.push(token.uri)
+
+  // 7. publish token
+  await rarepress.token.send(token)
+})();

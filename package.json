@@ -1,6 +1,6 @@
 {
-  "name": "rarepress.node",
-  "version": "0.0.2",
+  "name": "rareterm.node",
+  "version": "0.0.7",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -12,14 +12,15 @@
     "eth-sig-util": "^3.0.1",
     "ethereum-private-key-to-address": "^0.0.7",
     "form-data": "^4.0.0",
-    "mushie": "^0.0.2",
+    "mushie": "^0.0.4",
     "node-fetch": "^2.6.1",
-    "rarepress.js": "^0.0.15",
+    "rareterm": "^0.0.5",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
     "got": "^11.8.2",
     "js-image-generator": "^1.0.3",
+    "svg-to-img": "^2.0.9",
     "terminal-image": "1.2.0"
   }
 }

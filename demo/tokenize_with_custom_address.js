@@ -7,35 +7,39 @@
 * 3. mint an NFT
 *
 ******************************************************************************/
-const Rarepress = require('../index');
+const Rareterm = require('../index');
 const terminalImage = require('terminal-image');
 const got = require('got');
 (async () => {
   // 1. initialize with custom key derivation path
-  const rarepress = new Rarepress()
+  const rarepress = new Rareterm()
   await rarepress.init({
     key: "m'/44'/60'/0'/0/1",
-    host: "https://ropsten.rarepress.org/v0"
+    host: "https://rinkeby.rarenet.app/v1"
   })
 
   // 2. add to IPFS
-  let cid = await rarepress.add("https://thisartworkdoesnotexist.com")
-  const body = await got('https://ropsten.rarepress.org/ipfs/' + cid).buffer();
+  let cid = await rarepress.fs.add("https://thisartworkdoesnotexist.com")
+  const body = await got('https://rinkeby.rarenet.app/ipfs/' + cid).buffer();
 
   // 3. Print preview
   console.log(await terminalImage.buffer(body));
 
   // 4. Mint
-  try {
-    let token = await rarepress.create({
-      metadata: {
-        name: "Rare",
-        description: "Press",
-        image: "/ipfs/" + cid
-      }
-    })
-    console.log("token = ", token)
-  } catch (e) {
-    console.log("ERROR", e.toString())
-  }
+  let token = await rarepress.token.create({
+    type: "ERC721",
+    metadata: {
+      name: "Rare",
+      description: "Press",
+      image: "/ipfs/" + cid
+    }
+  })
+  console.log("token = ", token)
+
+  await rarepress.fs.push(cid)
+  await rarepress.fs.push(token.uri)
+
+  let sent = await rarepress.token.send(token)
+  console.log("https://rinkeby.rarible.com/token/" + sent.id)
+  process.exit()
 })();
